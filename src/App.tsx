@@ -1,48 +1,67 @@
-import React from "react";
-import { SafeAreaView,View,Text,FlatList, StyleSheet,TextInput } from "react-native";
-import store_data from "./store.json";
-import StoreCard from "./components/store/Store.Card";
-const App =( ) =>{
- const renderStore =({item}) => <StoreCard store={item}/>;
+import React, {useEffect, useState} from 'react';
+import music_data from './music-data.json'
+import SongCard from './components/SongCard'
+import SearchBar from './components/SearchBar'
+import {
+  View,
+  Text,
+  SafeAreaView,
+  TextInput,
+  StyleSheet,
+  TouchableOpacity,
+  FlatList,
+  Switch,
+  Image,
+  Dimensions,
+  Button,
+} from 'react-native';
 
-return(
-  <SafeAreaView style={style.container}>
-    <Text style={style.title }>Patika Store</Text>
-    <TextInput style={style.text_input} placeholder="Ara..."  ></TextInput>
-    <FlatList 
-     numColumns={2}
-    data={store_data}
-    renderItem={renderStore} 
-    />
 
-</SafeAreaView>
-) }
 
-const style=StyleSheet.create({
- container:{
-    flex:1,
-    backgroundColor:'white',
-    
- },
-  title:{
-     fontSize:30,
-     fontWeight:'bold',
-     color:'purple',
-     marginTop:5,
-     marginLeft:10,
+
+const App = () => { 
+
+const renderSong =({item})=><SongCard song={item} />;
+
+const renderSeparator = () => <View style={styles.separator}></View>;
+
+const handleSearch = (text) => {
+  const filteredList = music_data.filter(song =>{
+    const searchedText = text.toLowerCase();
+    const currentTitle= song.title.toLowerCase();
+
+   return currentTitle.indexOf(searchedText) > -1 ; //arama yaparken yazılan harf yoksa bize -1 değeri verdiği için koşulum aranan harfin indexinin -1 den büyük olması 
+
+  });
+
+  setList(filteredList);
+};
+const [list,setList] = useState(music_data);
+    return(
+        <SafeAreaView style={styles.container}>
+          
+         <SearchBar onSearch={handleSearch}/>
+            <FlatList 
+            keyExtractor={(item)=>item.id}
+            data={list}
+            renderItem={renderSong}
+            ItemSeparatorComponent={renderSeparator}
+            />
+          
+        
+        </SafeAreaView>
+    )
+}
+const styles = StyleSheet.create({
+  container:{
+    flex:1
   },
-  text_input:{
-    backgroundColor:'#E6E6E6',
-    fontSize:15,
-    fontWeight:'bold',
+  separator:{
     borderWidth:1,
-    borderRadius:10,
-    margin:10,
-    padding:10,
-   
-  },
-  
-
+    borderColor:'#e0e0e0'
+  }
 })
 
 export default App;
+
+
